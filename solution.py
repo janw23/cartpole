@@ -33,7 +33,6 @@ def linearize(
     dthetaacc_df = -1 / (mass_total * denominator)
     dxacc_df = (1 - mass_pole * length_pole * dthetaacc_df) / mass_total
 
-
     A = np.zeros((4, 4))
     B = np.zeros((4, 1))
 
@@ -63,11 +62,11 @@ class Solution1:
         # the vicinnity of the equilibrium point very fast.
         # Other penalty parameters, like velovity, act as a damping factor,
         # preventing oscillations once the system is close to the target state.
-        Q=[22.85374946834131, 4.173572355958551, 0.8160274195505297, 0.009991478547566969]
-        R=0.0008689413963011425
+        Q = [22.85374946834131, 4.173572355958551, 0.8160274195505297, 0.009991478547566969]
+        R = 0.0008689413963011425
 
         A, B = linearize(GRAVITY, MASS_CART, MASS_POLE, LENGTH_POLE, MU_POLE)
-        self.K, _, _ = control.lqr(A, B, np.eye(4) * np.array([*Q]), np.eye(1) * R)
+        self.K, _, _ = control.lqr(A, B, np.eye(4) * np.array(Q), np.eye(1) * R)
         
 
     # Keep this signature unchanged for automated testing!
@@ -88,11 +87,11 @@ class Solution2:
         # We care about the position just enough not to hit the track ends,
         # but then we damp the divergence speed with the velocity penalty
         # to prevent any overshoot (which is just a waste of energy).
-        Q=[11.474260126463925, 174.73857823578692, 0.2836756280323868, 0.006842520138545265]
-        R=0.06609290794456885
+        Q = [11.474260126463925, 174.73857823578692, 0.2836756280323868, 0.006842520138545265]
+        R = 0.06609290794456885
 
         A, B = linearize(GRAVITY, MASS_CART, MASS_POLE, LENGTH_POLE, MU_POLE)
-        self.K, _, _ = control.lqr(A, B, np.eye(4) * np.array([*Q]), np.eye(1) * R)
+        self.K, _, _ = control.lqr(A, B, np.eye(4) * np.array(Q), np.eye(1) * R)
 
     # Keep this signature unchanged for automated testing!
     # Returns one float - a desired force (u)
@@ -100,34 +99,3 @@ class Solution2:
         state = state.copy()
         state[0] -= self.target_pos
         return float(-self.K @ state)
-
-
-# TODO remove this at the end
-class Solution3:
-    # Keep this signature unchanged for automated testing!
-    # Reminder: implementing arbitrary target_pos is not required, but please try!
-    def __init__(self, init_state, target_pos, Q=None, R=None):
-        self.target_pos = target_pos
-        self.waiting = False
-
-        if Q is None:
-            Q = [1, 1, 1, 1]
-        if R is None:
-            R = 0.1
-
-        A, B = linearize(GRAVITY, MASS_CART, MASS_POLE, LENGTH_POLE, MU_POLE)
-        self.K, _, _ = control.lqr(A, B, np.eye(4) * np.array([*Q]), np.eye(1) * R)
-        
-
-    # Keep this signature unchanged for automated testing!
-    # Returns one float - a desired force (u)
-    def update(self, state):
-        pos = state[0]
-        state = state.copy()
-        state[0] -= self.target_pos
-        u = float(-self.K @ state)
-        # u = max(min(u, 10), -10)
-        if abs(pos) > 1.95 and u * pos > 0:
-            # Dont apply force if stuck agains the track end.
-            return 0
-        return u
