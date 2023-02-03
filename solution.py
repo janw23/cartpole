@@ -14,6 +14,8 @@ MU_POLE = 0.001
 
 # Keep this signature unchanged for automated testing!
 # Returns 2 numpy arrays - matrices A and B
+
+
 def linearize(
     gravity: float,
     mass_cart: float,
@@ -67,10 +69,10 @@ class Solution1:
 
         A, B = linearize(GRAVITY, MASS_CART, MASS_POLE, LENGTH_POLE, MU_POLE)
         self.K, _, _ = control.lqr(A, B, np.eye(4) * np.array(Q), np.eye(1) * R)
-        
 
     # Keep this signature unchanged for automated testing!
     # Returns one float - a desired force (u)
+
     def update(self, state):
         state = state.copy()
         state[0] -= self.target_pos
