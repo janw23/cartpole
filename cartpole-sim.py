@@ -136,7 +136,7 @@ class Simulation:
 
     def test_solution(self, target=0):
         # Create an instance of Solution
-        sol = solution.Solution1(self.get_state(), target)
+        sol = solution.Solution2(self.get_state(), target)
 
         steps = 0
         total_effort = 0

@@ -57,7 +57,7 @@ class Solution1:
     def __init__(self, init_state, target_pos):
         self.target_pos = target_pos
 
-        # I have found these parameters by starting with a good initial guess and
+        # I have found these parameters by starting with an educated guess and
         # then optimizing them via genetic algorithm.
         # To optimize the time to stability it makes sense to penalize position much more
         # than anything else (energy in particular). It makes the system reach
